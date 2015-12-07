@@ -59,7 +59,7 @@ gulp.task('default', ['clean'], function() {
 gulp.task('watch', function() {
 
   // Watch .scss files
-  gulp.watch('src/styles/**/*.scss', ['styles']);
+  gulp.watch('src/styles/**/*.css', ['styles']);
 
   // Watch .js files
   gulp.watch('src/scripts/**/*.js', ['scripts']);
