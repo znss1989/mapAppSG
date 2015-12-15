@@ -11,12 +11,13 @@
 
 <body>
     <div id="filter">
-        <input type="text" id="filter-word" data-bind="value: filterWord">
+        <p>Search: <input data-bind="value: filterText, valueUpdate: 'afterkeydown'"/></p>
+        <p data-bind="text: filterTestText"></p>
     </div>
     <div id="map-sg"></div>
-    <script type='text/javascript' src="dist/scripts/map.min.js"></script>
     <script type='text/javascript' src='dist/scripts/knockout-3.4.0.min.js'></script>
-    <script type='text/javascript' src="dist/scripts/engine.min.js"></script>
+    <script type='text/javascript' src="src/scripts/map-engine.js"></script>
+    <!-- <script type='text/javascript' src="dist/scripts/map-engine.min.js"></script> -->
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB8WkdTpxKh-mzTSfohiSGfrOWJlpPwzRU&callback=initMap">
     </script>
 
