@@ -27,7 +27,7 @@ function initMap() {
         zoom: 12,
         center: {lat: 1.3149014, lng: 103.7769791}
     });
-    Initiate markers on SG map
+    // Initiate markers on SG map
     for (var i = 0; i < locLength; ++i) {
         markers.push(new google.maps.Marker({
             position: locs[i].latLng,
