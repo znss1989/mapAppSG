@@ -3,15 +3,20 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta name="author" content="Wu Lei">
     <link href="dist/styles/main.min.css" rel="stylesheet">
     <title>Neighborhood Map for Downtown Singapore</title>
 </head>
 
 <body>
+    <div id="filter">
+        <input type="text" id="filter-word" data-bind="value: filterWord">
+    </div>
     <div id="map-sg"></div>
-    <script src="dist/scripts/map.min.js"></script>
+    <script type='text/javascript' src="dist/scripts/map.min.js"></script>
+    <script type='text/javascript' src='dist/scripts/knockout-3.4.0.min.js'></script>
+    <script type='text/javascript' src="dist/scripts/engine.min.js"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB8WkdTpxKh-mzTSfohiSGfrOWJlpPwzRU&callback=initMap">
     </script>
 
