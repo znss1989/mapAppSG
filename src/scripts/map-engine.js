@@ -27,7 +27,7 @@ function initMap() {
         zoom: 12,
         center: {lat: 1.3149014, lng: 103.7769791}
     });
-    // Initiate markers on SG map
+    Initiate markers on SG map
     for (var i = 0; i < locLength; ++i) {
         markers.push(new google.maps.Marker({
             position: locs[i].latLng,
@@ -76,6 +76,8 @@ function mapSGViewModel() {
         return self.filterText().toLowerCase();
     });
 
+    // Intermediate filtered results
+    self.filterItems = self.items();
     self.filteredItems = ko.computed(function() {
         if (!self.filter() || self.filter() == 'filter your interest...') {
             return self.items();
@@ -85,25 +87,27 @@ function mapSGViewModel() {
                 return stringStartsWith(item.title.toLowerCase(), self.filter());
             });            
         }
-    }); // Critical intermediate variable for later computation
+    }); 
+    
+    // Function to update the markers displayed
+    self.markersUpdate = function() {
+        deleteMarkers();
+        var filteredItemsLength = self.filteredItems().length;
+        for (var i = 0; i < filteredItemsLength; ++i) {
+            markers.push(new google.maps.Marker({
+                position: self.filteredItems()[i].latLng,
+                map: mapSG,
+                title: self.filteredItems()[i].title
+            }));
+        }
+    };
+    
+    // Debug & test module
     self.filterTestText = ko.computed(function() {
         console.log(self.filter() == 'filter your interest...');
         var result = self.filter() + ' ' + self.filteredItems().length;
         return result;
     });
-    // var fiteredItemsLength = self.filteredItems.length; 
-    
-    // self.markers = ko.computed(function() {
-    //     deleteMarkers();
-    //     for (var i = 0; i < fiteredItemsLength; ++i) {
-    //         markers.push(new google.maps.Marker({
-    //             position: filteredItems()[i].latLng,
-    //             map: mapSG,
-    //             title: filteredItems()[i].title
-    //         }));
-    //     }
-    //     return markers;
-    // });
 }
 
 // Activate knockout framework

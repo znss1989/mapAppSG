@@ -11,7 +11,7 @@
 
 <body>
     <div id="filter">
-        <p>Search: <input data-bind="value: filterText, valueUpdate: 'afterkeydown'"/></p>
+        <p>Search: <input data-bind="value: filterText, event: {keyup: markersUpdate}, valueUpdate: 'afterkeydown'"/></p>
         <p data-bind="text: filterTestText"></p>
     </div>
     <div id="map-sg"></div>
