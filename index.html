@@ -11,8 +11,11 @@
 
 <body>
     <div id="filter">
-        <p>Search: <input data-bind="value: filterText, event: {keyup: markersUpdate}, valueUpdate: 'afterkeydown'"/></p>
+        <p><strong id="search">Search: </strong><input data-bind="value: filterText, event: {keyup: markersUpdate}, valueUpdate: 'afterkeydown'"/></p>
         <p data-bind="text: filterTestText"></p>
+        <div id="list" data-bind="foreach: filteredItems">
+            <p data-bind="text: title"></p>
+        </div>
     </div>
     <div id="map-sg"></div>
     <script type='text/javascript' src='dist/scripts/knockout-3.4.0.min.js'></script>

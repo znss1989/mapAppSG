@@ -18,14 +18,19 @@ var locs = [
     {title: 'Garden by the Bay', latLng: {lat: 1.281566, lng: 103.863608}}
 ]; 
 var locLength = locs.length; // Locations information
-var markers = [];
+var markers = []; // Make it globally accessible
+
+// Add an info window on the marker
+var contentString;
+var infowindow; 
 
 // Initialize the mapSG
 function initMap() {
     // Create the SG map
     mapSG = new google.maps.Map(document.getElementById('map-sg'), {
         zoom: 12,
-        center: {lat: 1.3149014, lng: 103.7769791}
+        // center: {lat: 1.3149014, lng: 103.7769791}
+        center: {lat: 1.348630, lng: 103.839105}
     });
     // Initiate markers on SG map
     for (var i = 0; i < locLength; ++i) {
@@ -35,6 +40,10 @@ function initMap() {
             title: locs[i].title
         }));
     }
+    // Add an info window on the marker
+    infowindow = new google.maps.InfoWindow({
+        content: contentString
+    });
 }
 
 // Sets the map on all markers in the array.
@@ -60,7 +69,7 @@ function deleteMarkers() {
     markers = [];
 }
 
-// This is a simple *viewmodel* - JavaScript that defines the data and behavior of the UI of mapSG application
+// Function to check match string subset
 var stringStartsWith = function (string, startsWith) {          
     string = string || "";
     if (startsWith.length > string.length)
@@ -68,6 +77,7 @@ var stringStartsWith = function (string, startsWith) {
     return string.substring(0, startsWith.length) === startsWith;
 };
 
+// This is a simple *viewmodel* - JavaScript that defines the data and behavior of the UI of mapSG application
 function mapSGViewModel() {
     var self = this;
     self.items = ko.observableArray(locs);
@@ -99,13 +109,17 @@ function mapSGViewModel() {
                 map: mapSG,
                 title: self.filteredItems()[i].title
             }));
+            (function(index) {
+                markers[index].addListener('click', function() {
+                    infowindow.open(mapSG, markers[index]);
+                });                
+            })(i);
         }
     };
     
     // Debug & test module
     self.filterTestText = ko.computed(function() {
-        console.log(self.filter() == 'filter your interest...');
-        var result = self.filter() + ' ' + self.filteredItems().length;
+        var result = 'Note: ' + self.filteredItems().length + ' items found for query "' + self.filter() + '"';
         return result;
     });
 }
