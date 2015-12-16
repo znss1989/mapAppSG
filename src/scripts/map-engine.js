@@ -50,7 +50,7 @@ function initMap() {
         (function(j) {
             markers[j].addListener('click', function() {
                 contentString = '<div><h2 id="window-title">' + locs[j].title + '</h2></div>';
-                infowindow.content = contentString;
+                infowindow.setContent(contentString);
                 infowindow.open(mapSG, markers[j]);
             });
         })(i);
