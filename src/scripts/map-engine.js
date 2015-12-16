@@ -1,27 +1,27 @@
 'use strict' 
 var mapSG;
 var locs = [
-    {title: 'Nanyang Technological University', latLng: {lat: 1.348283, lng: 103.683119}},
-    {title: 'National University of Singapore', latLng: {lat: 1.296729, lng: 103.776351}},
-    {title: 'Marina Bay', latLng: {lat: 1.286848, lng: 103.854554}},
-    {title: 'Resorts World Sentosa', latLng: {lat: 1.255145, lng: 103.821810}},
-    {title: 'China Town', latLng: {lat: 1.283467, lng: 103.844410}},
-    {title: 'Singapore Zoo', latLng: {lat: 1.404338, lng: 103.792995}},
-    {title: 'Changi Airport Singapore', latLng: {lat: 1.364422, lng: 103.991518}},
-    {title: 'Orchard Road', latLng: {lat: 1.301532, lng: 103.838447}},
-    {title: 'Marina Bay Sands', latLng: {lat: 1.283725, lng: 103.860793}},
-    {title: 'Bukit Timah Nature Reserve', latLng: {lat: 1.348399, lng: 103.777454}},
-    {title: 'National Museum of Singapore', latLng: {lat: 1.296562, lng: 103.848561}},
-    {title: 'Clarke Quay', latLng: {lat: 1.290596, lng: 103.846471}},
-    {title: 'City Hall', latLng: {lat: 1.290654, lng: 103.851773}},
-    {title: 'Tian Tian Hainanese Chicken Rice', latLng: {lat: 1.280538, lng: 103.844465}},
-    {title: 'Garden by the Bay', latLng: {lat: 1.281566, lng: 103.863608}}
+    {index: 0, title: 'Nanyang Technological University', latLng: {lat: 1.348283, lng: 103.683119}},
+    {index: 1, title: 'National University of Singapore', latLng: {lat: 1.296729, lng: 103.776351}},
+    {index: 2, title: 'Marina Bay', latLng: {lat: 1.286848, lng: 103.854554}},
+    {index: 3, title: 'Resorts World Sentosa', latLng: {lat: 1.255145, lng: 103.821810}},
+    {index: 4, title: 'China Town', latLng: {lat: 1.283467, lng: 103.844410}},
+    {index: 5, title: 'Singapore Zoo', latLng: {lat: 1.404338, lng: 103.792995}},
+    {index: 6, title: 'Changi Airport Singapore', latLng: {lat: 1.364422, lng: 103.991518}},
+    {index: 7, title: 'Orchard Road', latLng: {lat: 1.301532, lng: 103.838447}},
+    {index: 8, title: 'Marina Bay Sands', latLng: {lat: 1.283725, lng: 103.860793}},
+    {index: 9, title: 'Bukit Timah Nature Reserve', latLng: {lat: 1.348399, lng: 103.777454}},
+    {index: 10, title: 'National Museum of Singapore', latLng: {lat: 1.296562, lng: 103.848561}},
+    {index: 11, title: 'Clarke Quay', latLng: {lat: 1.290596, lng: 103.846471}},
+    {index: 12, title: 'City Hall', latLng: {lat: 1.290654, lng: 103.851773}},
+    {index: 13, title: 'Tian Tian Hainanese Chicken Rice', latLng: {lat: 1.280538, lng: 103.844465}},
+    {index: 14, title: 'Garden by the Bay', latLng: {lat: 1.281566, lng: 103.863608}}
 ]; 
 var locLength = locs.length; // Locations information
 var markers = []; // Make it globally accessible
 
 // Add an info window on the marker
-var contentString;
+var contentString = '';
 var infowindow; 
 
 // Initialize the mapSG
@@ -44,6 +44,17 @@ function initMap() {
     infowindow = new google.maps.InfoWindow({
         content: contentString
     });
+
+    for (var i = 0; i < locLength; ++i) {
+        // Process listener in closure
+        (function(j) {
+            markers[j].addListener('click', function() {
+                contentString = '<div><h2 id="window-title">' + locs[j].title + '</h2></div>';
+                infowindow.content = contentString;
+                infowindow.open(mapSG, markers[j]);
+            });
+        })(i);
+    }
 }
 
 // Sets the map on all markers in the array.
@@ -101,19 +112,12 @@ function mapSGViewModel() {
     
     // Function to update the markers displayed
     self.markersUpdate = function() {
-        deleteMarkers();
+        clearMarkers();
         var filteredItemsLength = self.filteredItems().length;
+        var index;
         for (var i = 0; i < filteredItemsLength; ++i) {
-            markers.push(new google.maps.Marker({
-                position: self.filteredItems()[i].latLng,
-                map: mapSG,
-                title: self.filteredItems()[i].title
-            }));
-            (function(index) {
-                markers[index].addListener('click', function() {
-                    infowindow.open(mapSG, markers[index]);
-                });                
-            })(i);
+            index = self.filteredItems()[i].index;
+            markers[index].setMap(mapSG);
         }
     };
     
