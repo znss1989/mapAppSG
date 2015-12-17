@@ -25,6 +25,9 @@ var test;
 var contentString = '';
 var infowindow; 
 var toggleBounce; 
+var query;
+var wikiUrl;
+var wikiRequestTimeout;
 
 // Initialize the mapSG
 function initMap() {
@@ -65,23 +68,32 @@ function initMap() {
         (function(j) {
             markers[j].addListener('click', function() {
                 toggleBounce(j);
-                contentString = '<div><h3 id="window-title">' + locs[j].title + '</h2></div>';
+                contentString = '<div id="window"><h3 id="window-title">' + locs[j].title + '</h3><div id="window-wiki"></div><div id="window-instagram"></div></div>';
                 infowindow.setContent(contentString);
-                infowindow.open(mapSG, markers[j]);
+                infowindow.open(mapSG, markers[j]); // Instant response
+
+                query = locs[j].title; 
+                wikiUrl = 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' + query + '&format=json'; 
+                wikiRequestTimeout = setTimeout(function() {
+                    $('#window-wiki').text('Wikipedia has no related links yet :(');
+                }, 8000); // Ajax response
             });
+            $.ajax(wikiUrl, {dataType: 'jsonp',
+                    // headers: { 'Api-User-Agent': 'Example/1.0' }
+                }
+            )
+                .done(function(data) {
+                    $('#window-wiki').empty();
+                    var liItems = [];
+                    for (var i = 0; i < data[1].length; ++i) {
+                        ItemHtml = '<li id="wklk' + (i+1) +'" class="wiki-link"><a href="' + data[3][i] + '">' + data[1][i] + '</a></li>';
+                        liItems.push(ItemHtml);
+                        $('#window-wiki').append(liItems[i]);
+                    }
+                    clearTimeout(wikiRequestTimeout); // Cancel the setTimeout function, if request gets response successfully
+                });
         })(i);
     }
-
-    // // Alternative way to add listener
-    // for (var i = 0; i < locLength; ++i) {
-    //     (function(j) {
-    //         document.getElementById('list' + j).addEventListener('click', function() {
-    //             contentString = '<div><h3 id="window-title">' + locs[j].title + '</h2></div>';
-    //             infowindow.setContent(contentString);
-    //             infowindow.open(mapSG, markers[j]);
-    //         });
-    //     })(i);
-    // }
 }
 
 // Sets the map on all markers in the array.
