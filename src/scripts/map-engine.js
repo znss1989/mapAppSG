@@ -21,9 +21,10 @@ var locLength = locs.length; // Locations information
 var markers = []; // Make it globally accessible
 var test;
 
-// Add an info window on the marker
+// Prepare some global variables
 var contentString = '';
 var infowindow; 
+var toggleBounce; 
 
 // Initialize the mapSG
 function initMap() {
@@ -37,6 +38,7 @@ function initMap() {
     for (var i = 0; i < locLength; ++i) {
         markers.push(new google.maps.Marker({
             position: locs[i].latLng,
+            animation: google.maps.Animation.DROP,
             map: mapSG,
             title: locs[i].title
         }));
@@ -46,10 +48,23 @@ function initMap() {
         content: contentString
     });
 
+    // Customize toggleBounce for markers
+    toggleBounce = function(index) {
+        if (markers[index].getAnimation() !== null) {
+            marker.setAnimation(null);
+        } else {
+            for (var i = 0; i < markers.length; ++i) {
+                markers[i].setAnimation(null);
+            }
+            markers[index].setAnimation(google.maps.Animation.BOUNCE);
+        }
+    }
+
     for (var i = 0; i < locLength; ++i) {
         // Process listener in closure
         (function(j) {
             markers[j].addListener('click', function() {
+                toggleBounce(j);
                 contentString = '<div><h3 id="window-title">' + locs[j].title + '</h2></div>';
                 infowindow.setContent(contentString);
                 infowindow.open(mapSG, markers[j]);
@@ -140,7 +155,8 @@ function mapSGViewModel() {
 
     // List view click response
     self.listClick = function(item) {
-        console.log(item.index);
+        // console.log(item.index);
+        toggleBounce(item.index);
         contentString = '<div><h3 id="window-title">' + locs[item.index].title + '</h2></div>';
         infowindow.setContent(contentString);
         infowindow.open(mapSG, markers[item.index]);
