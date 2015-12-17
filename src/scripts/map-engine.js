@@ -19,6 +19,7 @@ var locs = [
 ]; 
 var locLength = locs.length; // Locations information
 var markers = []; // Make it globally accessible
+var test;
 
 // Add an info window on the marker
 var contentString = '';
@@ -49,24 +50,39 @@ function initMap() {
         // Process listener in closure
         (function(j) {
             markers[j].addListener('click', function() {
-                contentString = '<div><h2 id="window-title">' + locs[j].title + '</h2></div>';
+                contentString = '<div><h3 id="window-title">' + locs[j].title + '</h2></div>';
                 infowindow.setContent(contentString);
                 infowindow.open(mapSG, markers[j]);
             });
         })(i);
     }
+
+    // // Alternative way to add listener
+    // for (var i = 0; i < locLength; ++i) {
+    //     (function(j) {
+    //         document.getElementById('list' + j).addEventListener('click', function() {
+    //             contentString = '<div><h3 id="window-title">' + locs[j].title + '</h2></div>';
+    //             infowindow.setContent(contentString);
+    //             infowindow.open(mapSG, markers[j]);
+    //         });
+    //     })(i);
+    // }
 }
 
 // Sets the map on all markers in the array.
 function setMapOnAll(map) {
-    for (var i = 0; i < markers.length; i++) {
+    for (var i = 0; i < markers.length; ++i) {
         markers[i].setMap(map);
+        locs[i].disp = true;
     }
 }
 
 // Removes the markers from the map, but keeps them in the array.
 function clearMarkers() {
     setMapOnAll(null);
+    for (var i = 0; i < markers.length; ++i) {
+        locs[i].disp = false;
+    }
 }
 
 // Shows any markers currently in the array.
@@ -117,13 +133,22 @@ function mapSGViewModel() {
         var index;
         for (var i = 0; i < filteredItemsLength; ++i) {
             index = self.filteredItems()[i].index;
-            markers[index].setMap(mapSG);
+            markers[index].setMap(mapSG); // Set marker on the map
         }
+    };
+
+
+    // List view click response
+    self.listClick = function(item) {
+        console.log(item.index);
+        contentString = '<div><h3 id="window-title">' + locs[item.index].title + '</h2></div>';
+        infowindow.setContent(contentString);
+        infowindow.open(mapSG, markers[item.index]);
     };
     
     // Debug & test module
     self.filterTestText = ko.computed(function() {
-        var result = 'Note: ' + self.filteredItems().length + ' items found for query "' + self.filter() + '"';
+        var result = 'Note: ' + self.filteredItems().length + ' items found for query "' + self.filter() + '"' + self.infowindow;
         return result;
     });
 }
