@@ -7,7 +7,7 @@ var locs = [
     {index: 3, title: 'Resorts World Sentosa', latLng: {lat: 1.255145, lng: 103.821810}},
     {index: 4, title: 'China Town', latLng: {lat: 1.283467, lng: 103.844410}},
     {index: 5, title: 'Singapore Zoo', latLng: {lat: 1.404338, lng: 103.792995}},
-    {index: 6, title: 'Changi Airport Singapore', latLng: {lat: 1.364422, lng: 103.991518}},
+    {index: 6, title: 'Changi Airport', latLng: {lat: 1.364422, lng: 103.991518}},
     {index: 7, title: 'Orchard Road', latLng: {lat: 1.301532, lng: 103.838447}},
     {index: 8, title: 'Marina Bay Sands', latLng: {lat: 1.283725, lng: 103.860793}},
     {index: 9, title: 'Bukit Timah Nature Reserve', latLng: {lat: 1.348399, lng: 103.777454}},
@@ -29,6 +29,8 @@ var query;
 var wikiUrl;
 var wikiRequestTimeout;
 var ItemHtml;
+// var flickrUrl;
+// var flickrRequestTimeout;
 
 // Initialize the mapSG
 function initMap() {
@@ -70,7 +72,7 @@ function initMap() {
             markers[j].addListener('click', function() {
                 // Instant response
                 toggleBounce(j);
-                contentString = '<div id="window"><h3 id="window-title">' + locs[j].title + '</h3><div id="window-wiki"></div><div id="window-instagram"></div></div>';
+                contentString = '<div id="window"><h3 id="window-title">' + locs[j].title + '</h3><div id="window-wiki"></div><div id="window-flickr"></div></div>';
                 infowindow.setContent(contentString);
                 infowindow.open(mapSG, markers[j]); 
                 // Ajax requests
@@ -82,7 +84,6 @@ function initMap() {
                 }, 8000); 
                 $.ajax(wikiUrl, {dataType: 'jsonp'})
                     .done(function(data) {
-                        console.log(data);
                         $('#window-wiki').empty();
                         var liItems = [];
                         for (var i = 0; i < data[1].length; ++i) {
@@ -92,8 +93,15 @@ function initMap() {
                         }
                         clearTimeout(wikiRequestTimeout); // Cancel the setTimeout function, if request gets response successfully
                     }); 
-                // Instagram response
-                
+                // // Instagram response
+                // flickrUrl = 'https://api.flickr.com/v2/search?location=' + query + '&cc=SG';
+                // flickrRequestTimeout = setTimeout(function() {
+                //     $('#window-flickr').text('No results from flickr yet :(');
+                // }, 8000);
+                // $.ajax(flickrUrl)
+                //     .done(function(data) {
+                //         console.log(data);
+                //     });
             });
         })(i);
     }
@@ -171,10 +179,29 @@ function mapSGViewModel() {
     // List view click response
     self.listClick = function(item) {
         // console.log(item.index);
+        // Instant response
         toggleBounce(item.index);
-        contentString = '<div><h3 id="window-title">' + locs[item.index].title + '</h2></div>';
+        contentString = '<div id="window"><h3 id="window-title">' + locs[item.index].title + '</h3><div id="window-wiki"></div><div id="window-flickr"></div></div>';
         infowindow.setContent(contentString);
-        infowindow.open(mapSG, markers[item.index]);
+        infowindow.open(mapSG, markers[item.index]); 
+        // Ajax requests
+        query = locs[item.index].title; 
+        // Wiki reponse
+        wikiUrl = 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' + query + '&format=json'; 
+        wikiRequestTimeout = setTimeout(function() {
+            $('#window-wiki').text('Wikipedia has no related links yet :(');
+        }, 8000); 
+        $.ajax(wikiUrl, {dataType: 'jsonp'})
+            .done(function(data) {
+                $('#window-wiki').empty();
+                var liItems = [];
+                for (var i = 0; i < data[1].length; ++i) {
+                    ItemHtml = '<li id="wklk' + (i+1) +'" class="wiki-link"><a href="' + data[3][i] + '">' + data[1][i] + '</a></li>';
+                    liItems.push(ItemHtml);
+                    $('#window-wiki').append(liItems[i]);
+                }
+                clearTimeout(wikiRequestTimeout); // Cancel the setTimeout function, if request gets response successfully
+            });         
     };
     
     // Debug & test module
