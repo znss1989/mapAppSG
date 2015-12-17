@@ -28,6 +28,7 @@ var toggleBounce;
 var query;
 var wikiUrl;
 var wikiRequestTimeout;
+var ItemHtml;
 
 // Initialize the mapSG
 function initMap() {
@@ -54,7 +55,7 @@ function initMap() {
     // Customize toggleBounce for markers
     toggleBounce = function(index) {
         if (markers[index].getAnimation() !== null) {
-            marker.setAnimation(null);
+            markers[index].setAnimation(null);
         } else {
             for (var i = 0; i < markers.length; ++i) {
                 markers[i].setAnimation(null);
@@ -67,31 +68,33 @@ function initMap() {
         // Process listener in closure
         (function(j) {
             markers[j].addListener('click', function() {
+                // Instant response
                 toggleBounce(j);
                 contentString = '<div id="window"><h3 id="window-title">' + locs[j].title + '</h3><div id="window-wiki"></div><div id="window-instagram"></div></div>';
                 infowindow.setContent(contentString);
-                infowindow.open(mapSG, markers[j]); // Instant response
-
+                infowindow.open(mapSG, markers[j]); 
+                // Ajax requests
                 query = locs[j].title; 
+                // Wiki reponse
                 wikiUrl = 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' + query + '&format=json'; 
                 wikiRequestTimeout = setTimeout(function() {
                     $('#window-wiki').text('Wikipedia has no related links yet :(');
-                }, 8000); // Ajax response
+                }, 8000); 
+                $.ajax(wikiUrl, {dataType: 'jsonp'})
+                    .done(function(data) {
+                        console.log(data);
+                        $('#window-wiki').empty();
+                        var liItems = [];
+                        for (var i = 0; i < data[1].length; ++i) {
+                            ItemHtml = '<li id="wklk' + (i+1) +'" class="wiki-link"><a href="' + data[3][i] + '">' + data[1][i] + '</a></li>';
+                            liItems.push(ItemHtml);
+                            $('#window-wiki').append(liItems[i]);
+                        }
+                        clearTimeout(wikiRequestTimeout); // Cancel the setTimeout function, if request gets response successfully
+                    }); 
+                // Instagram response
+                
             });
-            $.ajax(wikiUrl, {dataType: 'jsonp',
-                    // headers: { 'Api-User-Agent': 'Example/1.0' }
-                }
-            )
-                .done(function(data) {
-                    $('#window-wiki').empty();
-                    var liItems = [];
-                    for (var i = 0; i < data[1].length; ++i) {
-                        ItemHtml = '<li id="wklk' + (i+1) +'" class="wiki-link"><a href="' + data[3][i] + '">' + data[1][i] + '</a></li>';
-                        liItems.push(ItemHtml);
-                        $('#window-wiki').append(liItems[i]);
-                    }
-                    clearTimeout(wikiRequestTimeout); // Cancel the setTimeout function, if request gets response successfully
-                });
         })(i);
     }
 }
