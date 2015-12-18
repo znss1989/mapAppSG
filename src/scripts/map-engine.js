@@ -29,8 +29,6 @@ var query;
 var wikiUrl;
 var wikiRequestTimeout;
 var ItemHtml;
-// var flickrUrl;
-// var flickrRequestTimeout;
 
 // Initialize the mapSG
 function initMap() {
@@ -74,16 +72,16 @@ function initMap() {
                 if (markers[j].getAnimation() == null) {
                     toggleBounce(j);
                 }                
-                contentString = '<div id="window"><h3 id="window-title">' + locs[j].title + '</h3><div id="window-wiki"></div><div id="window-flickr"></div></div>';
+                contentString = '<div id="window"><h3 id="window-title">' + locs[j].title + '</h3><div id="window-wiki"></div></div>';
                 infowindow.setContent(contentString);
                 infowindow.open(mapSG, markers[j]); 
                 // Ajax requests
                 query = locs[j].title; 
                 // Wiki reponse
                 wikiUrl = 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' + query + '&format=json'; 
-                wikiRequestTimeout = setTimeout(function() {
-                    $('#window-wiki').text('Wikipedia has no related links yet :(');
-                }, 8000); 
+                // wikiRequestTimeout = setTimeout(function() {
+                //     $('#window-wiki').text('Wikipedia has no related links yet :(');
+                // }, 8000); 
                 $.ajax(wikiUrl, {dataType: 'jsonp'})
                     .done(function(data) {
                         $('#window-wiki').empty();
@@ -93,17 +91,11 @@ function initMap() {
                             liItems.push(ItemHtml);
                             $('#window-wiki').append(liItems[i]);
                         }
-                        clearTimeout(wikiRequestTimeout); // Cancel the setTimeout function, if request gets response successfully
-                    }); 
-                // // Instagram response
-                // flickrUrl = 'https://api.flickr.com/v2/search?location=' + query + '&cc=SG';
-                // flickrRequestTimeout = setTimeout(function() {
-                //     $('#window-flickr').text('No results from flickr yet :(');
-                // }, 8000);
-                // $.ajax(flickrUrl)
-                //     .done(function(data) {
-                //         console.log(data);
-                //     });
+                        // clearTimeout(wikiRequestTimeout); // Cancel the setTimeout function, if request gets response successfully
+                    })
+                    .fail(function() {
+                        $('#window-wiki').text('Wikipedia has no related links yet :(');
+                    });
                 google.maps.event.addListener(infowindow,'closeclick', function() {
                     if (markers[j].getAnimation() !== null) {
                         toggleBounce(j);
@@ -172,7 +164,7 @@ function mapSGViewModel() {
         }
         else {
             return ko.utils.arrayFilter(self.items(), function(item) {
-                return stringStartsWith(item.title.toLowerCase(), self.filter());
+                return stringStartsWith(item.title.toLowerCase(), self.filter()); // Use indexOf() to optimize the search
             });            
         }
     }); 
@@ -188,22 +180,21 @@ function mapSGViewModel() {
         }
     };
 
-
     // List view click response
     self.listClick = function(item) {
         // console.log(item.index);
         // Instant response
         toggleBounce(item.index);
-        contentString = '<div id="window"><h3 id="window-title">' + locs[item.index].title + '</h3><div id="window-wiki"></div><div id="window-flickr"></div></div>';
+        contentString = '<div id="window"><h3 id="window-title">' + locs[item.index].title + '</h3><div id="window-wiki"></div></div>';
         infowindow.setContent(contentString);
         infowindow.open(mapSG, markers[item.index]); 
         // Ajax requests
         query = locs[item.index].title; 
         // Wiki reponse
         wikiUrl = 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' + query + '&format=json'; 
-        wikiRequestTimeout = setTimeout(function() {
-            $('#window-wiki').text('Wikipedia has no related links yet :(');
-        }, 8000); 
+        // wikiRequestTimeout = setTimeout(function() {
+        //     $('#window-wiki').text('Wikipedia has no related links yet :(');
+        // }, 8000); 
         $.ajax(wikiUrl, {dataType: 'jsonp'})
             .done(function(data) {
                 $('#window-wiki').empty();
@@ -213,7 +204,10 @@ function mapSGViewModel() {
                     liItems.push(ItemHtml);
                     $('#window-wiki').append(liItems[i]);
                 }
-                clearTimeout(wikiRequestTimeout); // Cancel the setTimeout function, if request gets response successfully
+                // clearTimeout(wikiRequestTimeout); // Cancel the setTimeout function, if request gets response successfully
+            })
+            .fail(function() {
+                $('#window-wiki').text('Wikipedia has no related links yet :(');
             });         
     };
     
