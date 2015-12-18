@@ -25,6 +25,7 @@ h3 {
     left: 250px;
     width: 0;
     height: 100%;
+    margin-top: 20px;
     margin-left: -250px;
     overflow-y: auto;
     background: #eee;
