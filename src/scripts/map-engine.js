@@ -206,7 +206,7 @@ function mapSGViewModel() {
     
     // Debug & test module
     self.filterTestText = ko.computed(function() {
-        var result = 'Note: ' + self.filteredItems().length + ' items found for query "' + self.filter() + '"' + self.infowindow;
+        var result = 'Note: ' + self.filteredItems().length + ' items found for query "' + self.filter() + '"';
         return result;
     });
 }
