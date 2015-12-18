@@ -46,7 +46,7 @@ h3 {
 
 #map-wrapper {
     width: 100%;
-    max-width: 800px;
+    max-width: 720px;
     height: 100%;
     position: absolute;
     padding: 15px; /*Does this affect overflow of map?*/
@@ -76,7 +76,8 @@ h3 {
 }
 
 #list li {
-    text-indent: 10px;
+    /*text-indent: 2px;*/
+    color: #01579b;
 }
 
 #filter-head {

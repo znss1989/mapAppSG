@@ -13,12 +13,12 @@
 <body>
     <div id="navibar">
         <h1>Find@SG</h1>
-        <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Filter List</a>
+        <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Filter List</a>
     </div>
     <div id="wrapper">
         <div id="filter-wrapper">
             <div id="filter">
-                <p id="filter-head"><strong id="search">Search: </strong><input data-bind="value: filterText, event: {keyup: markersUpdate}, valueUpdate: 'afterkeydown'"/></p>
+                <p id="filter-head"><strong id="search">Search: </strong><input data-bind="value: filterText, event: {keyup: markersUpdate}, valueUpdate: 'afterkeydown'" placeholder="Filter your interest..."/></p>
                 <p data-bind="text: filterTestText"></p>
                 <ul id="list" data-bind="foreach: filteredItems">
                     <li data-bind="attr: {id: 'list' + index}, click: $root.listClick">

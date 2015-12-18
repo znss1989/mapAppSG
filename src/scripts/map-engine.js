@@ -71,7 +71,9 @@ function initMap() {
         (function(j) {
             markers[j].addListener('click', function() {
                 // Instant response
-                toggleBounce(j);
+                if (markers[j].getAnimation() == null) {
+                    toggleBounce(j);
+                }                
                 contentString = '<div id="window"><h3 id="window-title">' + locs[j].title + '</h3><div id="window-wiki"></div><div id="window-flickr"></div></div>';
                 infowindow.setContent(contentString);
                 infowindow.open(mapSG, markers[j]); 
@@ -102,6 +104,11 @@ function initMap() {
                 //     .done(function(data) {
                 //         console.log(data);
                 //     });
+                google.maps.event.addListener(infowindow,'closeclick', function() {
+                    if (markers[j].getAnimation() !== null) {
+                        toggleBounce(j);
+                    }
+                });
             });
         })(i);
     }
@@ -152,7 +159,7 @@ $("#menu-toggle").click(function(e) {
 function mapSGViewModel() {
     var self = this;
     self.items = ko.observableArray(locs);
-    self.filterText = ko.observable("Filter your interest...");
+    self.filterText = ko.observable('');
     self.filter = ko.computed(function() {
         return self.filterText().toLowerCase();
     });
@@ -160,7 +167,7 @@ function mapSGViewModel() {
     // Intermediate filtered results
     self.filterItems = self.items();
     self.filteredItems = ko.computed(function() {
-        if (!self.filter() || self.filter() == 'filter your interest...') {
+        if (!self.filter()) {
             return self.items();
         }
         else {
