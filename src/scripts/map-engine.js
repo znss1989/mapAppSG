@@ -1,4 +1,4 @@
-'use strict' 
+'use strict';
 var mapSG;
 var locs = [
     {index: 0, title: 'Nanyang Technological University', latLng: {lat: 1.348283, lng: 103.683119}},
@@ -141,6 +141,12 @@ var stringStartsWith = function (string, startsWith) {
         return false;
     return string.substring(0, startsWith.length) === startsWith;
 };
+
+// Toggle class of wrapper
+$("#menu-toggle").click(function(e) {
+    e.preventDefault();
+    $("#wrapper").toggleClass("toggled");
+});
 
 // This is a simple *viewmodel* - JavaScript that defines the data and behavior of the UI of mapSG application
 function mapSGViewModel() {
