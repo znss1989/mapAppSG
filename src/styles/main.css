@@ -1,11 +1,13 @@
-html, body { 
+html { 
     height: 100%;
     margin: 0; 
     padding: 0; 
 }
 
-h1{
-    /*text-align: center;*/
+body { 
+    height: 100%;
+    margin: 0; 
+    padding: 0; 
 }
 
 h3 {
@@ -68,16 +70,16 @@ h3 {
 }
 
 #list {
-    /*position: absolute;*/
+    /* Those are left for adjusting */
+    /*position: absolute;*/ 
     /*top: 0;*/
     /*width: 250px;
     margin: 0;
-    padding: 0;*/
+    padding: 0;*/ 
     list-style: none;
 }
 
 #list li {
-    /*text-indent: 2px;*/
     color: #01579b;
 }
 
