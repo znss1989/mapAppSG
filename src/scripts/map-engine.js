@@ -69,12 +69,14 @@ function initMap() {
         (function(j) {
             markers[j].addListener('click', function() {
                 // Instant response
+                // Marker & info window
                 if (markers[j].getAnimation() == null) {
                     toggleBounce(j);
                 }                
                 contentString = '<div id="window"><h3 id="window-title">' + locs[j].title + '</h3><div id="window-wiki"></div></div>';
                 infowindow.setContent(contentString);
-                infowindow.open(mapSG, markers[j]); 
+                infowindow.open(mapSG, markers[j]);
+
                 // Ajax requests
                 query = locs[j].title; 
                 // Wiki reponse
@@ -94,7 +96,7 @@ function initMap() {
                         // clearTimeout(wikiRequestTimeout); // Cancel the setTimeout function, if request gets response successfully
                     })
                     .fail(function() {
-                        $('#window-wiki').text('Wikipedia has no related links yet :(');
+                        $('#window-wiki').text('No results sent back from Wikipedia yet :(');
                     });
                 google.maps.event.addListener(infowindow,'closeclick', function() {
                     if (markers[j].getAnimation() !== null) {
@@ -184,10 +186,16 @@ function mapSGViewModel() {
     self.listClick = function(item) {
         // console.log(item.index);
         // Instant response
+        // Markers & infowindow
         toggleBounce(item.index);
         contentString = '<div id="window"><h3 id="window-title">' + locs[item.index].title + '</h3><div id="window-wiki"></div></div>';
         infowindow.setContent(contentString);
-        infowindow.open(mapSG, markers[item.index]); 
+        infowindow.open(mapSG, markers[item.index]);
+        // Close filter list
+        if (window.innerWidth < 768) {
+            $("#wrapper").toggleClass("toggled");
+        }
+
         // Ajax requests
         query = locs[item.index].title; 
         // Wiki reponse
@@ -207,7 +215,7 @@ function mapSGViewModel() {
                 // clearTimeout(wikiRequestTimeout); // Cancel the setTimeout function, if request gets response successfully
             })
             .fail(function() {
-                $('#window-wiki').text('Wikipedia has no related links yet :(');
+                $('#window-wiki').text('No results sent back from Wikipedia yet :(');
             });         
     };
     
